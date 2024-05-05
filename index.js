@@ -1,58 +1,64 @@
-// document.querySelector('.btn-start-with-computer').addEventListener('click', startGameWithComputer);
-// document.querySelector('.btn-start-with-friend').addEventListener('click', startGameWithFriend);
-
 
 let currentPlayer = 'X';
-//window.alert("האם תבחר לשחק מול חבר או מול המחשב?");
+let gameActive = true; // אם המשחק נגמר false האם המשחק פעיל - הופך ל
+
+document.querySelector('.btn-start-with-friend').addEventListener('click', function() {
+    document.querySelector(`.js-status`).innerText = "מתחיל משחק חדש";
+    resetGame();
+    startGameWithFriend(); 
+});
+
+document.querySelector('.btn-start-with-computer').addEventListener('click', function() {
+    document.querySelector(`.js-status`).innerText = "מתחיל משחק חדש";
+    resetGame();
+    startGameWithComputer(); 
+});
 
 
 
 function resetGame() {
     const cells = document.querySelectorAll('.cell');
+
     cells.forEach(cell => {
         cell.innerText = ''; // ניקוי התאים
         cell.style.color = ''; // איפוס הצבע
-        cell.removeEventListener('click', playerMove); // הסרת האזנה לפונקציה playerMove
-        cell.removeEventListener('click', computerMove); // הסרת האזנה לפונקציה computerMove
-        cell.removeEventListener('click', startGameWithFriend); // הסרת האזנה לפונקציה startGameWithFriend
+        cell.removeEventListener('click', playerMove); 
+        cell.removeEventListener('click', computerMove); 
+        cell.removeEventListener('click', startGameWithFriend);
     });
 }
 
 function startGameWithFriend() {
+
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
-        cell.addEventListener('click', playerFriendMove); // הוספת האזנה לפונקציה playerMove
+        cell.addEventListener('click', playerFriendMove); 
     });
-    currentPlayer = 'O'; // תחילת משחק עם השחקן O
-    gameActive = true; // מאפשר את המשחק
+    document.querySelector(`.js-status`).innerText = "משחק מול חבר";
+
+    currentPlayer = 'X'; 
+    gameActive = true; 
 }
 
 function startGameWithComputer() {
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
-        cell.addEventListener('click', computerMove); // הוספת האזנה לפונקציה computerMove
+        cell.addEventListener('click', computerMove);
+        cell.removeEventListener('click', playerMove); 
+        cell.addEventListener('click', playerMove);
 
     });
     currentPlayer = Math.random() < 0.5 ? 'X' : 'O'; // בוחר באופן רנדומלי מי מתחיל
-    {
-        alert("המשחק התחיל! אתה העיגול והמחשב הוא האיקס");
-        alert(`${currentPlayer}  מתחיל!`);
-    }
-     gameActive = true; // מאפשר את המשחק
-    if (currentPlayer === 'X') {
+   
+    gameActive = true; 
+    if (currentPlayer === 'O') {
+        document.querySelector(`.js-status`).innerText = "המחשב מתחיל ראשון";
         setTimeout(computerMove, 500); // נותן זמן לשחקן לראות את ההודעה לפני המהלך
     }
+    else
+        document.querySelector(`.js-status`).innerText = "אתה מתחיל ראשון";
+
 }
-
-document.querySelector('.btn-start-with-friend').addEventListener('click', function() {
-    resetGame();
-    startGameWithFriend(); // מאפס את המשחק ומתחיל משחק חדש
-});
-
-document.querySelector('.btn-start-with-computer').addEventListener('click', function() {
-    resetGame();
-    startGameWithComputer(); // מאפס את המשחק ומתחיל משחק חדש
-});
 
 
 
@@ -77,13 +83,15 @@ function playerFriendMove() {
 
   // בדיקת ניצחון
   if (checkWin()) {
-      alert(' ניצחון ל' + currentPlayer + '!');
+    document.querySelector(`.js-status`).innerText = " ניצחון ל "+ currentPlayer + "!";
       gameActive = false;
       return;
   }
 
   if (checkDraw()) {
-      alert('תיקו - שחקו שוב!');
+      //alert('תיקו - שחקו שוב!');
+      document.querySelector(`.js-status`).innerText = " תיקו - שחקו שוב!";
+
       gameActive = false;
       return;
   }
@@ -93,6 +101,8 @@ function playerFriendMove() {
 
 }
 
+
+//בדיקת תיקו
 function checkDraw() {
   const cells = document.querySelectorAll('.cell');
   for (let i = 0; i < cells.length; i++) {
@@ -100,76 +110,50 @@ function checkDraw() {
           return false;
       }
   }
+  document.querySelector(`.js-status`).innerText = " תיקו - שחקו שוב!";
   return true;
 }   
 
-let gameActive = true; // משתנה גלובלי שמציין אם המשחק פעיל
-
-// function startGameWithComputer() {
-//   //resetGame();
-//   currentPlayer = Math.random() < 0.5 ? 'X' : 'O'; // בוחר באופן רנדומלי מי מתחיל
-//   {
-//       alert("המשחק התחיל! אתה העיגול והמחשב הוא האיקס");
-//       alert(`${currentPlayer}  מתחיל!`);
-//   }
-   
-//   if (currentPlayer === 'X') {
-//       setTimeout(computerMove, 500); // נותן זמן לשחקן לראות את ההודעה לפני המהלך
-//   }
-// }
-
-// function resetGame() {
-//   const cells = document.querySelectorAll('.cell');
-//   cells.forEach(cell => {
-//       cell.innerText = '';
-//       cell.removeEventListener('click', playerMove); // מוחק את האירועים הקודמים כדי למנוע כפילויות
-//       cell.addEventListener('click', playerMove);
-//   });
-//   gameActive = true; // מאפשר למשחק להתחיל מחדש
-//   currentPlayer = Math.random() < 0.5 ? 'X' : 'O'; // בחירה רנדומלית מי מתחיל
-//   if (currentPlayer === 'X') {
-//       setTimeout(computerMove, 500); // מאפשר למחשב להתחיל אם זה תורו
-//   }
-// }
 
 function playerMove() {
-  if (this.innerText !== '' || currentPlayer !== 'O' || !gameActive) return; // מבטיח שהתא ריק וזה תור השחקן
+  if (this.innerText !== '' || currentPlayer !== 'X' || !gameActive) 
+    return; // מבטיח שהתא ריק וזה תור השחקן
 
-  this.innerText = 'O';
+  this.innerText = 'X';
   // בדיקת ניצחון לפני שמעדכנים את השחקן
   if (checkWin()) {
-      alert('כל הכבוד - ניצחת את המחשב!'); // המחשב ניצח
+     document.querySelector(`.js-status`).innerText = "כל הכבוד - ניצחת את המחשב!";
       gameActive = false; // מסמן שהמשחק נגמר
       return;
   }
   else if (checkDraw()) {
-      alert('תיקו - שחקו שוב!'); // המחשב ניצח
       gameActive = false; // מסמן שהמשחק נגמר
       return;
   }
   // מעדכן את השחקן רק אם המשחק נמשך
-  currentPlayer = 'X';
+  currentPlayer = 'O';
   setTimeout(computerMove, 500);
 
 }
 
 function computerMove() {
-  if (currentPlayer !== 'X' || !gameActive) return; // מבטיח שזה תור המחשב
+  if (currentPlayer !== 'O' || !gameActive) 
+    return; // מבטיח שזה תור המחשב
+
   const cells = document.querySelectorAll('.cell');
-  let move = findWinningMove('X', cells) || findWinningMove('O', cells) || findRandomMove(cells);
+  let move = findWinningMove('O', cells) || findWinningMove('X', cells) || findRandomMove(cells);
   if (move !== undefined) {
-      cells[move].innerText = 'X';
+      cells[move].innerText = 'O';
       if (checkWin()) { // קריאה ל-checkWin לפני החלפת השחקן
-          alert('אוו הפעם הפסדת - נסה שוב!'); // המחשב ניצח
+         document.querySelector(`.js-status`).innerText = "אוו הפעם הפסדת - נסה שוב!";
           gameActive = false; // מסמן שהמשחק נגמר
           return;
       }
       else if (checkDraw()) {
-        alert('תיקו - שחקו שוב!'); // המחשב ניצח
         gameActive = false; // מסמן שהמשחק נגמר
         return;
     }
-      currentPlayer = 'O'; // מעדכן את השחקן רק אם המשחק נמשך
+      currentPlayer = 'X'; // מעדכן את השחקן רק אם המשחק נמשך
   }
 
 
